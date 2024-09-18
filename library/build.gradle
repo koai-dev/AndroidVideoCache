@@ -4,14 +4,14 @@ plugins {
 }
 
 group = 'com.koai-dev'
-version = '1.0.0'
+version = '1.0.1'
 
 android {
     compileSdk 34
 
     defaultConfig {
         minSdkVersion 21
-        versionName "1.0.0"
+        versionName "1.0.1"
         versionCode 1
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
@@ -21,11 +21,6 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
-    }
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
     }
 
     buildFeatures {
@@ -55,7 +50,7 @@ afterEvaluate {
             release(MavenPublication) {
                 groupId = 'com.koai-dev'
                 artifactId = 'android-video-cache'
-                version = '1.0.0'
+                version = '1.0.1'
 
                 afterEvaluate {
                     from components.release
@@ -67,7 +62,7 @@ afterEvaluate {
 
 task createReleaseTag {
     doLast {
-        def tagName = "1.0.0"
+        def tagName = "1.0.1"
         try {
             exec {
                 commandLine("git", "tag", "-a", tagName, "-m", "Release tag $tagName")
