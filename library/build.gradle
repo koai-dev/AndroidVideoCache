@@ -1,49 +1,83 @@
-buildscript {
-    repositories {
-        jcenter()
-    }
-    dependencies {
-        classpath 'com.novoda:bintray-release:0.4.0'
-    }
+plugins {
+    id 'com.android.library'
+    id("maven-publish")
 }
 
-apply plugin: 'com.android.library'
-apply plugin: 'idea'
-apply plugin: 'bintray-release'
+group = 'com.koai-dev'
+version = '1.0.0'
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion '25.0.2'
+    compileSdk 34
 
     defaultConfig {
-        minSdkVersion 9
-        targetSdkVersion 23
-        versionCode 22
-        versionName '2.7.1'
+        minSdkVersion 21
+        versionName "1.0.0"
+        versionCode 1
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_7
-        targetCompatibility JavaVersion.VERSION_1_7
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
-}
 
-idea {
-    module {
-        downloadJavadoc = true
-        downloadSources = true
+    buildFeatures {
+        buildConfig = true
+    }
+
+    publishing {
+        singleVariant('release') {
+            withSourcesJar()
+            withJavadocJar()
+        }
+    }
+    lint {
+        abortOnError true
+        baseline file('lint-baseline.xml')
     }
 }
 
 dependencies {
-    compile 'org.slf4j:slf4j-android:1.7.21'
+    implementation("org.slf4j:slf4j-android:1.7.21")
 }
 
-publish {
-    userOrg = 'alexeydanilov'
-    groupId = 'com.danikula'
-    artifactId = 'videocache'
-    publishVersion = android.defaultConfig.versionName
-    description = 'Cache support for android VideoView'
-    website = 'https://github.com/danikula/AndroidVideoCache'
+
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                groupId = 'com.koai-dev'
+                artifactId = 'android-video-cache'
+                version = '1.0.0'
+
+                afterEvaluate {
+                    from components.release
+                }
+            }
+        }
+    }
+}
+
+task createReleaseTag {
+    doLast {
+        def tagName = "1.0.0"
+        try {
+            exec {
+                commandLine("git", "tag", "-a", tagName, "-m", "Release tag $tagName")
+            }
+
+            exec {
+                commandLine("git", "push", "origin", tagName)
+            }
+        } catch (e) {
+            println(e.toString())
+        }
+    }
 }
